@@ -135,8 +135,9 @@ class PanierController extends AbstractController
         $discount = $em->getRepository(Discount::class)->findOneByDiscountCode($request->get('_discount'));
 
         $promo = '2';
-        if ($discount && $user->getPanier()->getDiscountUsed() === false) {
+        if ($discount && $discount->getUseCount() >= 1 && $user->getPanier()->getDiscountUsed() === false) {
             $user->getPanier()->setTotalPrice($user->getPanier()->getTotalPrice() - $user->getPanier()->getTotalPrice() * $discount->getDiscount() / 100)->setDiscountUsed(true);
+            $discount->setUseCount($discount->getUseCount()-1);
             $em->flush();
             $promo = '1';
         } elseif ($discount && $user->getPanier()->getDiscountUsed()) {

@@ -25,6 +25,7 @@ class AppFixtures extends Fixture
             $discount = new Discount();
             $discount->setDiscountCode($discountData['DiscountCode']);
             $discount->setDiscount($discountData['Discount']);
+            $discount->setUseCount($discountData['UseCount']);
 
             $manager->persist($discount);
         }
@@ -101,18 +102,22 @@ class AppFixtures extends Fixture
         yield [
             'DiscountCode' => 'CODE25',
             'Discount' => 25,
+            'UseCount' => 10
         ];
         yield [
             'DiscountCode' => 'CODE50',
             'Discount' => 50,
+            'UseCount' => 10
         ];
         yield [
             'DiscountCode' => 'CODE75',
             'Discount' => 75,
+            'UseCount' => 10
         ];
         yield [
             'DiscountCode' => 'CODE100',
             'Discount' => 100,
+            'UseCount' => 10
         ];
         
     }

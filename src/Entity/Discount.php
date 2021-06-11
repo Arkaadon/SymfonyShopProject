@@ -27,6 +27,11 @@ class Discount
      */
     private $Discount;
 
+    /**
+     * @ORM\Column(type="integer")
+     */
+    private $UseCount;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -52,6 +57,18 @@ class Discount
     public function setDiscount(int $Discount): self
     {
         $this->Discount = $Discount;
+
+        return $this;
+    }
+
+    public function getUseCount(): ?int
+    {
+        return $this->UseCount;
+    }
+
+    public function setUseCount(int $UseCount): self
+    {
+        $this->UseCount = $UseCount;
 
         return $this;
     }

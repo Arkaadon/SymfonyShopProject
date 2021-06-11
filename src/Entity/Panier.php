@@ -37,7 +37,7 @@ class Panier
     /**
      * @ORM\Column(type="boolean")
      */
-    private $DiscountUsed;
+    private $DiscountUsed = 0;
 
     public function __construct()
     {

@@ -1,0 +1,34 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Bamazon{% endblock %}
+
+{% block body %}
+  <style>
+    .example-wrapper {
+      margin: 1em auto;
+      max-width: 800px;
+      width: 95%;
+      font: 18px/1.5 sans-serif;
+    }
+    .example-wrapper code {
+      background: #F5F5F5;
+      padding: 2px 6px;
+    }
+  </style>
+
+  <div class="d-flex justify-content-center align-items-center flex-column">
+    <h1>Bienvenue sur BamazonShopping</h1>
+    <h3>Vous êtes connecté en tant que
+      {{ app.user.username }}</h3>
+
+    <a href="{{ path('app_logout')}}" class="btn btn-primary mt-2">Logout</a>
+    <a href="{{ path('panier')}}" class="btn btn-primary mt-2">Panier</a>
+    <a href="{{ path('app_homepage')}}" class="btn btn-primary mt-2">Accueil</a>
+    {% if "ROLE_ADMIN" in app.user.roles %}
+      <a href="{{ path('admin')}}" class="btn btn-primary mt-2">Page d'Administration</a>
+    {% endif %}
+  </div>
+
+  <div data-controller="database-check">
+  </div>
+{% endblock %}

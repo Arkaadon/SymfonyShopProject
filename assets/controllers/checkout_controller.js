@@ -2,10 +2,6 @@ import { Controller } from 'stimulus';
 import Swal from 'sweetalert2';
 
 export default class extends Controller {
-    static values = {
-      url: String,
-    }
-
     connect() {
       if (window.location.href === 'https://127.0.0.1:8000/checkout/1') {
         this.CodeCorrect();

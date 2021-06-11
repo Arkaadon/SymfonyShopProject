@@ -1,0 +1,72 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Hello PanierController!{% endblock %}
+
+{% block body %}
+  <style>
+    .example-wrapper {
+      margin: 1em auto;
+      max-width: 800px;
+      width: 95%;
+      font: 18px/1.5 sans-serif;
+    }
+    .example-wrapper code {
+      background: #F5F5F5;
+      padding: 2px 6px;
+    }
+  </style>
+
+  <div class="d-flex justify-content-center align-items-center flex-column">
+    <h1>Bienvenue sur BamazonShopping</h1>
+    <h3>Vous êtes connecté en tant que
+      {{ app.user.username }}</h3>
+    <h4>Votre panier</h4>
+
+    <a href="{{ path('app_logout')}}" class="btn btn-primary mt-2">Logout</a>
+    <a href="{{ path('panier')}}" class="btn btn-primary mt-2">Panier</a>
+    <a href="{{ path('app_homepage')}}" class="btn btn-primary mt-2">Accueil</a>
+  </div>
+  <form class="d-flex justify-content-center align-items-center mt-2" method="post" action="{{ path('app_homepage') }}">
+    <input class="form-control mr-sm-2 w-25 Search" type="search" placeholder="Search" name="search">
+    <button class="btn btn-outline-primary my-2 my-sm-0" type="submit">Search</button>
+  </form>
+  <div {{ stimulus_controller('panier', {
+      url: path('panier')
+    })}}>
+    <div class="d-flex justify-content-center align-items-center mt-5">
+      {% for quantity in quantities %}
+        <div class="card" style="width: 18rem;">
+          <div class="card-body">
+            <form action="{{ path('adjust_cart', {'product': quantity.getProduct.getId}) }}" method="POST" {{ stimulus_controller('panier') }} data-action="panier#onAdjustSubmit">
+              <h5 class="card-tile">{{ quantity.getProduct.getName }}</h5>
+              <p>{{quantity.getProduct.getDescription}}</p>
+              <p>Prix:
+                {{quantity.getProduct.getPrice}}
+                €</p>
+              <p>Prix pour
+                {{ quantity.getQuantity }}
+                {{ quantity.getProduct.getName }}:
+                {{ quantity.getTotalQuantityPrice }}
+                €</p>
+              <label for="quantity">Quantité:</label>
+              <input class="form-control" type="number" id="quantity" name="_quantity" value="{{ quantity.getQuantity }}">
+              <input type="hidden" name="_token" value="{{ csrf_token('adjust_cart') }}"/>
+            </form>
+            <form action="{{ path('remove_item_from_cart', {'product': quantity.getProduct.getId}) }}" method="POST" {{ stimulus_controller('panier') }} data-action="panier#onRemoveSubmit">
+              <button class="btn btn-primary">
+                Supprimer du panier
+              </button>
+            </form>
+          </div>
+        </div>
+      {% endfor %}
+    </div>
+  </div>
+  <div class="d-flex justify-content-center flex-column align-items-center mt-5">
+    <h5 class="totalPrice mt-3">Prix total:
+      {{ user.getPanier.getTotalPrice }}
+      €</h5>
+    <a href="{{ path('checkout', {'promo': '.'}) }}" class="btn btn-primary mt-2">Confirmer le panier</a>
+    <p class="msg mt-5"></p>
+  </div>
+{% endblock %}

@@ -1,0 +1,15 @@
+<div id="Search" class="d-flex justify-content-center align-items-center mt-5 flex-wrap">
+  {% for product in products %}
+    <div class="card" style="width: 18rem;">
+        <div class="card-body">
+          <h5 class="card-tile">{{ product.name }}</h5>
+          <p>{{product.description}}</p>
+          <p>Prix:
+            {{product.price}} €</p>
+          <a href="{{ path('magasin_Item', {'product': product.id}) }}" class="btn btn-primary">Voir l'article</a>
+        </div>
+      </div>
+  {% endfor %}
+
+</div>
+<p class="msg d-flex justify-content-center align-items-center mt-5"></p>

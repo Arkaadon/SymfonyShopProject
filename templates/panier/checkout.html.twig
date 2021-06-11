@@ -1,0 +1,55 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Hello PanierController!{% endblock %}
+
+{% block body %}
+  <div class="d-flex justify-content-center align-items-center flex-column">
+    <h1>Bienvenue sur BamazonShopping</h1>
+    <h3>Vous êtes connecté en tant que
+      {{ app.user.username }}</h3>
+    <h4>Votre panier</h4>
+
+    <a href="{{ path('app_logout')}}" class="btn btn-primary mt-2">Logout</a>
+    <a href="{{ path('panier')}}" class="btn btn-primary mt-2">Panier</a>
+    <a href="{{ path('app_homepage')}}" class="btn btn-primary mt-2">Accueil</a>
+  </div>
+  <form class="d-flex justify-content-center align-items-center mt-2" method="post" action="{{ path('app_homepage') }}">
+    <input class="form-control mr-sm-2 w-25 Search" type="search" placeholder="Search" name="search">
+    <button class="btn btn-outline-primary my-2 my-sm-0" type="submit">Search</button>
+  </form>
+  <div class="d-flex justify-content-center align-items-center mt-5">
+    {% for quantity in quantities %}
+      <div class="card" style="width: 18rem;">
+        <div class="card-body">
+          <h5 class="card-tile">{{ quantity.getProduct.getName }}</h5>
+          <p>{{quantity.getProduct.getDescription}}</p>
+          <p>Prix:
+            {{quantity.getProduct.getPrice}}
+            €</p>
+          <p>Prix pour
+            {{ quantity.getQuantity }}
+            {{ quantity.getProduct.getName }}:
+            {{ quantity.getTotalQuantityPrice }}
+            €</p>
+        </div>
+      </div>
+    {% endfor %}
+  </div>
+  <div>
+    <form class="d-flex flex-row justify-content-center align-items-center mt-5" action="{{ path('discount') }}" method="POST" {{ stimulus_controller('checkout') }} data-action="checkout#onDiscountSubmit">
+      <label for="quantity">Code promo:</label>
+      <input class="form-control" style="width: 10%" type="text" id="discount" name="_discount">
+      <input type="hidden" name="_token" value="{{ csrf_token('discount') }}"/>
+      <button class="btn btn-outline-primary my-2 my-sm-0" type="submit">Utiliser</button>
+    </form>
+
+  </div>
+  <div class="d-flex justify-content-center flex-column align-items-center">
+    <h5 class="totalPrice mt-3">Prix total:
+      {{ user.getPanier.getTotalPrice }}
+      €</h5>
+    <a href="{{ path('pay')}}" class="btn btn-primary mt-2">Valider et payer</a>
+    <a href="{{ path('panier')}}" class="btn btn-primary mt-2">Retourner en arrière</a>
+    <p class="msg mt-5"></p>
+  </div>
+{% endblock %}

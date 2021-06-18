@@ -23,6 +23,7 @@
 
     <a href="{{ path('app_logout')}}" class="btn btn-primary mt-2">Logout</a>
     <a href="{{ path('panier')}}" class="btn btn-primary mt-2">Panier</a>
+    <a href="{{ path('history')}}" class="btn btn-primary mt-2">Historique</a>
     <a href="{{ path('app_homepage')}}" class="btn btn-primary mt-2">Accueil</a>
     {% if "ROLE_ADMIN" in app.user.roles %}
       <a href="{{ path('admin')}}" class="btn btn-primary mt-2">Page d'Administration</a>

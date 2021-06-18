@@ -3,6 +3,8 @@
 namespace App\Entity;
 
 use App\Repository\UserRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
@@ -41,6 +43,16 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      * @ORM\OneToOne(targetEntity=Panier::class, mappedBy="PanierOfUser", cascade={"persist", "remove"})
      */
     private $panier;
+
+    /**
+     * @ORM\OneToMany(targetEntity=Stripe::class, mappedBy="User", orphanRemoval=true)
+     */
+    private $stripes;
+
+    public function __construct()
+    {
+        $this->stripes = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -155,6 +167,36 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         }
 
         $this->panier = $panier;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|Stripe[]
+     */
+    public function getStripes(): Collection
+    {
+        return $this->stripes;
+    }
+
+    public function addStripe(Stripe $stripe): self
+    {
+        if (!$this->stripes->contains($stripe)) {
+            $this->stripes[] = $stripe;
+            $stripe->setUser($this);
+        }
+
+        return $this;
+    }
+
+    public function removeStripe(Stripe $stripe): self
+    {
+        if ($this->stripes->removeElement($stripe)) {
+            // set the owning side to null (unless already changed)
+            if ($stripe->getUser() === $this) {
+                $stripe->setUser(null);
+            }
+        }
 
         return $this;
     }

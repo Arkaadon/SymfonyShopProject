@@ -61,22 +61,21 @@ class PanierController extends AbstractController
 
         $products = [];
 
-        foreach($quantities as $quantity)
-        {
+        foreach ($quantities as $quantity) {
             $name = strval($quantity->getProduct()->getName());
             // $productQuantity = strval($quantity->getProduct()->getProductQuantities());
             $product = [
                 'price_data' => [
-                  'currency' => 'eur',
-                  'unit_amount' => $quantity->getProduct()->getPrice()*100,
-                  'product_data' => [
-                    // 'name' => $name,
-                    'name' => $quantity->getProduct()->getName(),
-                  ],
+                    'currency' => 'eur',
+                    'unit_amount' => $quantity->getProduct()->getPrice() * 100,
+                    'product_data' => [
+                        // 'name' => $name,
+                        'name' => $quantity->getProduct()->getName(),
+                    ],
                 ],
                 // 'quantity' => 2,
                 'quantity' => $quantity->getQuantity(),
-              ];
+            ];
             array_push($products, $product);
         }
         $sucessUrl = $this->generateUrl('success', [], UrlGeneratorInterface::ABSOLUTE_URL);
@@ -93,22 +92,22 @@ class PanierController extends AbstractController
         $session = $service->getSessionById($request->get('session_id'));
         $paid = $session->payment_status;
         // dd($session);
-        if($session instanceof Session){
+        if ($session instanceof Session) {
             $stripe = new Stripe();
             $stripe->setSessionId($request->get('session_id'));
-            if($paid === 'paid'){
+            if ($paid === 'paid') {
                 $result = $this->render('panier/checkout/success.html.twig', []);
-                $stripe->setPaymentStatus($paid);
-                foreach($quantities as $quantity){
+                $stripe->setPaymentStatus($paid)->setUser($user);
+                foreach ($quantities as $quantity) {
                     $em->remove($quantity);
                 }
-            }else{
+            } else {
                 $result = $this->render('panier/checkout/failed.html.twig', []);
                 $stripe->setPaymentStatus($paid);
             }
             $em->persist($stripe);
             $em->flush();
-        }else{
+        } else {
             throw $this->createNotFoundException('not_exist');
         }
         return $result;
@@ -199,5 +198,31 @@ class PanierController extends AbstractController
             $promo = '!';
         }
         return $this->redirectToRoute('checkout', ['promo' => $promo]);
+    }
+
+    #[Route('/history', name: 'history')]
+    public function paymentHistory(Request $request, CheckoutSession $service): Response
+    {
+        $em = $this->getDoctrine()->getManager();
+        $user = $em->getRepository(User::class)->find($this->getUser()->getId());
+        $sessionIds = $user->getStripes();
+        $stripe = new \Stripe\StripeClient("sk_test_51J3GoYLOoq2f2CBEBVfJ3PrAjm42go09ahfQ5BPK9zkqYtrqVPtLtzfge9LAGbFSX59UWZA04fhT4az56amubMBA00ME2BQzi0");
+
+        $orders = [];
+        foreach ($sessionIds as $sessionId) {
+            $session = $service->getSessionById($sessionId->getSessionId());
+            $pi = $session->payment_intent;
+            $line_items = $stripe->checkout->sessions->allLineItems($sessionId->getSessionId(), ['limit' => 10]);
+            $prices = $stripe->paymentIntents->retrieve($pi,[]);
+            // dd($prices);
+            $orderTicket = [$line_items, $prices];
+            array_push($orders, $orderTicket);
+        }
+        // dd($orders);
+
+        return $this->render('panier/history.html.twig', [
+            'user' => $user,
+            'orders' => $orders,
+        ]);
     }
 }

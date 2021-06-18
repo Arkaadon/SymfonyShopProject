@@ -1,0 +1,43 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Hello PanierController!{% endblock %}
+
+{% block body %}
+
+  <div class="d-flex justify-content-center align-items-center flex-column">
+    <h1>Bienvenue sur BamazonShopping</h1>
+    <h3>Vous êtes connecté en tant que
+      {{ app.user.username }}</h3>
+    <h4>Votre historique de paiement</h4>
+
+    <a href="{{ path('app_logout')}}" class="btn btn-primary mt-2">Logout</a>
+    <a href="{{ path('panier')}}" class="btn btn-primary mt-2">Panier</a>
+    <a href="{{ path('history')}}" class="btn btn-primary mt-2">Historique</a>
+    <a href="{{ path('app_homepage')}}" class="btn btn-primary mt-2">Accueil</a>
+  </div>
+  <form class="d-flex justify-content-center align-items-center mt-2" method="post" action="{{ path('app_homepage') }}">
+    <input class="form-control mr-sm-2 w-25 Search" type="search" placeholder="Search" name="search">
+    <button class="btn btn-outline-primary my-2 my-sm-0" type="submit">Search</button>
+  </form>
+  <div class="d-flex justify-content-center align-items-center mt-5 flex-wrap">
+    {% for order in orders %}
+      {% set totalPrice = 0 %}
+      <div class="card" style="width: 18rem;">
+        <div class="card-body">
+          {% for dataCollec in order[0].data %}
+            <h5>- 
+              {{dataCollec.description}}</h5>
+            {% set quantityPrice = dataCollec.price.unit_amount * dataCollec.quantity %}
+            <p>Quantité:
+              {{dataCollec.quantity}} pour {{quantityPrice / 100}} €</p>
+          {% endfor %}
+          <h5>Prix total: {{ order[1].amount / 100}}
+            €</h5>
+          {# <a href="{{ path('history_details', {})}}" class="btn btn-primary mt-2">Voir le détail</a> #}
+        </div>
+      </div>
+    {% endfor %}
+
+  </div>
+
+{% endblock %}

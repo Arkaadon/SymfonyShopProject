@@ -27,6 +27,12 @@ class Stripe
      */
     private $PaymentStatus;
 
+    /**
+     * @ORM\ManyToOne(targetEntity=User::class, inversedBy="stripes")
+     * @ORM\JoinColumn(nullable=false)
+     */
+    private $User;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -52,6 +58,18 @@ class Stripe
     public function setPaymentStatus(bool $PaymentStatus): self
     {
         $this->PaymentStatus = $PaymentStatus;
+
+        return $this;
+    }
+
+    public function getUser(): ?User
+    {
+        return $this->User;
+    }
+
+    public function setUser(?User $User): self
+    {
+        $this->User = $User;
 
         return $this;
     }

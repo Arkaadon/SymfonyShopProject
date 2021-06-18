@@ -1,0 +1,80 @@
+{% extends 'base.html.twig' %}
+{% block body %}
+  <div class="d-flex justify-content-center align-items-center flex-column">
+    <h1>Bienvenue sur BamazonShopping</h1>
+    <h3>Vous êtes connecté en tant que
+      {{ app.user.username }}</h3>
+    <h4>Votre panier</h4>
+
+    <a href="{{ path('app_logout')}}" class="btn btn-primary mt-2">Logout</a>
+    <a href="{{ path('panier')}}" class="btn btn-primary mt-2">Panier</a>
+    <a href="{{ path('app_homepage')}}" class="btn btn-primary mt-2">Accueil</a>
+  </div>
+  <form class="d-flex justify-content-center align-items-center mt-2" method="post" action="{{ path('app_homepage') }}">
+    <input class="form-control mr-sm-2 w-25 Search" type="search" placeholder="Search" name="search">
+    <button class="btn btn-outline-primary my-2 my-sm-0" type="submit">Search</button>
+  </form>
+  <form {{ stimulus_controller('checkout') }} data-action="checkout#Payment">
+    {# <section id="checkout-section">
+        <div class="product">
+          <div class="description">
+            <h3 id="checkout-h3">Stubborn Attachments</h3>
+            <h5 id="checkout-h5">$20.00</h5>
+          </div>
+        </div> #}
+    <div class="d-flex justify-content-center align-items-center mt-5">
+      {% for quantity in quantities %}
+        <div class="card" style="width: 18rem;">
+          <div class="card-body">
+            <h5 class="card-tile">{{ quantity.getProduct.getName }}</h5>
+            <p>{{quantity.getProduct.getDescription}}</p>
+            <p>Prix:
+              {{quantity.getProduct.getPrice}}
+              €</p>
+            <p>Prix pour
+              {{ quantity.getQuantity }}
+              {{ quantity.getProduct.getName }}:
+              {{ quantity.getTotalQuantityPrice }}
+              €</p>
+          </div>
+        </div>
+      {% endfor %}
+    </div>
+    <div class="d-flex justify-content-center flex-column align-items-center">
+    <h5 class="totalPrice mt-3">Prix total:
+      {{ user.getPanier.getTotalPrice }}
+      €</h5>
+      <button path='{{path('set_checkout')}}' data-action="click->checkout#Payment" type="button" class="btn btn-outline-primary mt-2 my-2 my-sm-0">Checkout</button>
+    </div>
+    {# </section> #}
+  </form>
+{% endblock %}
+{% block javascripts %}
+
+  <script type="text/javascript">
+    // Create an instance of the Stripe object with your publishable API key
+    {
+      # var stripe = Stripe("pk_test_TYooMQauvdEDq54NiTphI7jx");
+      var checkoutButton = document.getElementById("checkout-button");
+      #
+    } {
+      # checkoutButton.addEventListener("click", function () {
+        fetch("https://127.0.0.1:8000/src/Service/CheckoutSession.php", {method: "POST"}).then(function (response) {
+          return response.json();
+        }).then(function (session) {
+          return stripe.redirectToCheckout({sessionId: session.id});
+        }).then(function (result) {
+          // If redirectToCheckout fails due to a browser or network
+          // error, you should display the localized error message to your
+          // customer using error.message.
+          if (result.error) {
+            alert(result.error.message);
+          }
+        }).catch(function (error) {
+          console.error("Error:", error);
+        });
+      });
+      #
+    }
+  </script>
+{% endblock %}

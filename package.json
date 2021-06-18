@@ -20,6 +20,7 @@
     "dependencies": {
         "jquery": "^3.6.0",
         "stimulus-use": "^0.23.0",
+        "stripe": "^8.154.0",
         "sweetalert2": "^11.0.16",
         "whatwg-fetch": "^3.6.2"
     }
